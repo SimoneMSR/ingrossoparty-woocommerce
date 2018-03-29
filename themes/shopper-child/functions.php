@@ -207,3 +207,51 @@ add_action( 'after_setup_theme', function() {
   remove_class_action('loop_shop_columns','Shopper_WooCommerce','loop_columns');
     add_filter('loop_shop_columns','loop_columns' );
 } );
+
+
+$minimum_order_error = 'E\' necessario un importo minimo di Euro %s al fine di ordinare.';
+$minimum = 50;
+
+add_action('woocommerce_before_checkout_form','show_minimum_checkout');
+
+function show_minimum_checkout(){
+global $minimum_order_error;
+global $minimum;
+    $total = WC()->cart->get_total('edit');
+
+    if( $total < $minimum){
+        wc_add_notice( sprintf( $minimum_order_error , wc_price( $minimum ) ), 'error' );
+    }
+}
+
+add_action( 'woocommerce_checkout_process', 'wc_minimum_order_amount' );
+ 
+function wc_minimum_order_amount() {
+global $minimum_order_error;
+global $minimum;
+    // Set this variable to specify a minimum order value
+
+    if ( WC()->cart->total < $minimum ) {
+
+        if( is_cart() ) {
+
+            wc_print_notice( sprintf( $minimum_order_error ,  wc_price( $minimum ) ), 'error' );
+
+        } else {
+
+            wc_add_notice( sprintf( $minimum_order_error , wc_price( $minimum ) ), 'error' );
+
+        }
+    }
+
+}
+
+function enable_update_cart_button(){
+if ( ! wp_script_is( 'jquery', 'done' ) ) {
+     wp_enqueue_script( 'jquery' );
+   }
+    wp_enqueue_script( 'enable_update_cart_button_script','/wp-content/themes/shopper-child/assets/js/custom.js', array(), NULL);
+
+}
+
+add_action( 'wp_enqueue_scripts', 'enable_update_cart_button' );

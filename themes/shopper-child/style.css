@@ -16,10 +16,37 @@ Version:        0.1.0
 
 */
 
-.archive #primary{
+#primary{
 	width:100%;
 }
 
-.archive #secondary{
+#secondary{
 	display:none;
+}
+
+/* form rows*/
+@media (min-width: 768px) {
+	.single-product #primary{
+		width: 73.9130434783%;
+	}
+
+	.single-product #secondary{
+	display:block;
+}
+}
+
+.checkout .form-row-last , .checkout .form-row-first {
+	width: 100%!important;
+	padding-right: 0!important;
+}
+
+form .form-row-first, form .form-row-last {
+	padding-right: 0!important;
+	width: 47%!important;
+}
+
+@media (max-width: 768px) {
+	form .form-row-first, form .form-row-last {
+		width: 100%!important;
+	}
 }
