@@ -1,0 +1,25 @@
+/*
+
+Theme Name:     Shopper child for ingrossoparty
+
+Theme URI:      http://example.com/
+
+Description:    Shopper child theme for ingrossoparty
+
+Author:         SimoneMSR
+
+Author URI:     http://example.com/about/
+
+Template:       shopper
+
+Version:        0.1.0
+
+*/
+
+.archive #primary{
+	width:100%;
+}
+
+.archive #secondary{
+	display:none;
+}

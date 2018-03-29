@@ -1,52 +1,4 @@
 <?php
-/**
- * Shopper functions and definitions
- *
- * @link https://developer.wordpress.org/themes/basics/theme-functions/
- *
- * @package Shopper
- */
-
-/**
- * Assign the shopper version to a var
- */
-$shopper_theme              = wp_get_theme( 'shopper' );
-$shopper_version = $shopper_theme['Version'];
-
-/**
- * Set the content width based on the theme's design and stylesheet.
- */
-if ( ! isset( $content_width ) ) {
-	
-	$content_width = 980; /* pixels */
-}
-
-$shopper = (object) array(
-	'version' => $shopper_version,
-
-	/**
-	 * Initialize all the things.
-	 */
-	'main'       => require 'inc/class-shopper.php',
-	'customizer' => require 'inc/customizer/class-shopper-customizer.php',
-);
-
-
-require 'inc/shopper-functions.php';
-require 'inc/shopper-template-hooks.php';
-require 'inc/shopper-template-functions.php';
-
-/**
- * All for WooCommerce functions
- */
-if ( shopper_is_woocommerce_activated() ) {
-	
-	$shopper->woocommerce = require 'inc/woocommerce/class-shopper-woocommerce.php';
-
-	require 'inc/woocommerce/shopper-wc-template-hooks.php';
-	require 'inc/woocommerce/shopper-wc-template-functions.php';
-}
-
 /* Funzione per far visionare il form di fatturazione in fase di registrazione */
 add_action('woocommerce_register_form_start','zk_add_billing_form_to_registration');
 function zk_add_billing_form_to_registration(){
@@ -93,7 +45,7 @@ function zk_validation_billing_address( $username, $email, $validation_errors ){
                 $validation_errors->add( $key.'_error', __( 'Perfavore inserisci una via.', 'woocommerce' ) );
             }
             if($key == 'billing_city' && empty($field) ){
-                $validation_errors->add( $key.'_error', __( 'Perfavore inserisci una città.', 'woocommerce' ) );
+                $validation_errors->add( $key.'_error', __( 'Perfavore inserisci una cittÃ .', 'woocommerce' ) );
             }
             if($key == 'billing_state' && empty($field) ){
                 if(count( WC()->countries->get_states($_POST['billing_country']) ) > 0)
@@ -131,52 +83,52 @@ add_filter( 'woocommerce_checkout_fields', 'custom_move_checkout_fields' );
 
 function custom_move_checkout_fields( $fields ) {
 
-	/* Posizione field */
-	$billing_order = array(
-		"billing_first_name", 
-		"billing_last_name",
-		"billing_invoice_type",
-		"billing_company",
-		"billing_piva",
-		"billing_cf",
-		"billing_country",
-		"billing_address_1", 
-		"billing_address_2",
-		"billing_city",
-		"billing_state",
-		"billing_postcode", 
-		"billing_phone",
-		"billing_email"
-	);
+    /* Posizione field */
+    $billing_order = array(
+        "billing_first_name", 
+        "billing_last_name",
+        "billing_invoice_type",
+        "billing_company",
+        "billing_piva",
+        "billing_cf",
+        "billing_country",
+        "billing_address_1", 
+        "billing_address_2",
+        "billing_city",
+        "billing_state",
+        "billing_postcode", 
+        "billing_phone",
+        "billing_email"
+    );
 
-	/* Controllo Field */
-	foreach($billing_order as $billing_field) {
-	    $billing_fields[$billing_field] = $fields["billing"][$billing_field];
-	}
+    /* Controllo Field */
+    foreach($billing_order as $billing_field) {
+        $billing_fields[$billing_field] = $fields["billing"][$billing_field];
+    }
 
-	$fields["billing"] = $billing_fields;
+    $fields["billing"] = $billing_fields;
 
-	/* Riordino campi di spedizione */
-	$shipping_order = array(
-		"shipping_first_name", 
-		"shipping_last_name", 
-		"shipping_company", 
-		"shipping_address_1", 
-		"shipping_address_2", 
-		"shipping_postcode", 
-		"shipping_country",
-		"shipping_city",
-		"shipping_state"
-	);
+    /* Riordino campi di spedizione */
+    $shipping_order = array(
+        "shipping_first_name", 
+        "shipping_last_name", 
+        "shipping_company", 
+        "shipping_address_1", 
+        "shipping_address_2", 
+        "shipping_postcode", 
+        "shipping_country",
+        "shipping_city",
+        "shipping_state"
+    );
 
-	/* Controllo Field */
-	foreach($shipping_order as $shipping_field) {
-	    $shipping_fields[$shipping_field] = $fields["shipping"][$shipping_field];
-	}
+    /* Controllo Field */
+    foreach($shipping_order as $shipping_field) {
+        $shipping_fields[$shipping_field] = $fields["shipping"][$shipping_field];
+    }
 
-	$fields["shipping"] = $shipping_fields;
+    $fields["shipping"] = $shipping_fields;
 
-	return $fields;
+    return $fields;
 }
 
 
@@ -187,24 +139,25 @@ function antonino_validations( $username, $email, $validation_errors ){
         /*Validazione dei campi richiesti*/
         if( strpos( $key, 'billing_' ) !== false ){
             if($key == 'billing_piva'  ){
-            	$piva_without_numbers = preg_replace('/[0-9]+/', '', $field);
-            	if( empty($field) || strlen($field) !== 11  || strlen($piva_without_numbers) > 0 ){
-            			$validation_errors->add( $key.'_error', __( 'Perfavore inserisci una partita iva composta da esattemente 11 cifre.', 'woocommerce' ) );
-          		  }
+                $piva_without_numbers = preg_replace('/[0-9]+/', '', $field);
+                if( empty($field) || strlen($field) !== 11  || strlen($piva_without_numbers) > 0 ){
+                        $validation_errors->add( $key.'_error', __( 'Perfavore inserisci una partita iva composta da esattemente 11 cifre.', 'woocommerce' ) );
+                  }
             }
         }
        /*validazione codice fiscale */
-	   if( strpos( $key, 'billing_' ) !== false ){
+       if( strpos( $key, 'billing_' ) !== false ){
             if($key == 'billing_cf' && $_POST['billing_invoice_type'] == 'professionist_invoice' ){
-            	$cf_without_numbers_and_letter = preg_replace('/[0-9]+/', '', $field);
-				$cf_without_numbers_and_letter = preg_replace('/[^a-zA-Z]+/','', $cf_without_numbers_and_letter);
-            	if( empty($field) || strlen($cf_without_numbers_and_letter) !== 16 ){
-            			$validation_errors->add( $key.'_error', __( 'Perfavore inserisci un codice fiscale composto da esattemente 16 cifre.', 'woocommerce' ) );
-          		  }
+                $cf_without_numbers_and_letter = preg_replace('/[0-9]+/', '', $field);
+                $cf_without_numbers_and_letter = preg_replace('/[^a-zA-Z]+/','', $cf_without_numbers_and_letter);
+                if( empty($field) || strlen($cf_without_numbers_and_letter) !== 16 ){
+                        $validation_errors->add( $key.'_error', __( 'Perfavore inserisci un codice fiscale composto da esattemente 16 cifre.', 'woocommerce' ) );
+                  }
             }
         }
-	   endforeach;
+       endforeach;
 }
+
 
 function reorder_price(){
     remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
@@ -221,3 +174,36 @@ if ( ! function_exists( 'woocommerce_ingrossoparty_template_single_price' ) ) {
         wc_get_template( 'single-product/price.php' );
     }
 }
+
+function remove_class_action ($action,$class,$method) {
+    global $wp_filter ;
+    if (isset($wp_filter[$action])) {
+        $len = strlen($method) ;
+        foreach ($wp_filter[$action] as $pri => $actions) {
+            foreach ($actions as $name => $def) {
+                if (substr($name,-$len) == $method) {
+                    if (is_array($def['function'])) {
+                        if (get_class($def['function'][0]) == $class) {
+                error_log("hook found");
+                            if (is_object($wp_filter[$action]) && isset($wp_filter[$action]->callbacks)) {
+                                unset($wp_filter[$action]->callbacks[$pri][$name]) ;
+                            } else {
+                                unset($wp_filter[$action][$pri][$name]) ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function loop_columns() {
+            return apply_filters( 'shopper_loop_columns', 4 ); // 4 products per row
+}
+
+
+add_action( 'after_setup_theme', function() {
+  remove_class_action('loop_shop_columns','Shopper_WooCommerce','loop_columns');
+    add_filter('loop_shop_columns','loop_columns' );
+} );
