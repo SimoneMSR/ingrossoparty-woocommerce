@@ -41,6 +41,7 @@ class WC_Product_Variable_Smart extends WC_Product_Variable {
 	}
 
 	public function get_boxing_prices_html(){
+		return [];
 		$variations = $this->get_available_variations();
 		$variations_num = count($variations);
 		$number_of_boxes = 0;

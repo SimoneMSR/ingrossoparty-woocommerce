@@ -29,27 +29,36 @@ function woocommerce_total_product_price() {
     echo sprintf('<div id="product_total_price" style="margin-bottom:20px;">%s %s</div>',__('Totale prodotto:','woocommerce'),'<span class="price">'.$product->get_price().'</span>');
     //echo sprintf('<div id="cart_total_price" style="margin-bottom:20px;display:none">%s %s</div>',__('Totale carrello:','woocommerce'),'<span class="price">'.$product->get_price().'</span>');
     if( $product->is_type( 'variable' )){
-        $variable_product = new WC_Product_Variable_Smart($product);
-        $prices = $variable_product->get_boxing_prices_html();
+       // $variable_product = new WC_Product_Variable_Smart($product);
+        //$prices = $variable_product->get_boxing_prices_html();
 
-        echo "<table class='ingrossoparty-boxing-table'>";
+       // echo "<table class='ingrossoparty-boxing-table'>";
 
-            foreach ($prices as $boxing_type => $boxing_price) {
-                echo "<tr><td>$boxing_type</td><td>boxing_price</td></tr>";
-            }
+       //     foreach ($prices as $boxing_type => $boxing_price) {
+       //         echo "<tr><td>$boxing_type</td><td>boxing_price</td></tr>";
+        //    }
 
-        echo "</table>";
+       // echo "</table>";
     }
     ?>
         <script>
             jQuery(function($){
                 var current_cart_total = <?php echo $woocommerce->cart->cart_contents_total; ?>;
-                var currency = '<?php echo get_woocommerce_currency_symbol(); ?>';
-                var isProductVariable = '<?php echo $product->is_type( 'simple' ); ?>'
-                var price = isProductVariable ? jQuery('.woocommerce-variation-price .woocommerce-Price-amount.amount').text().replace(currency,'') : <?php echo $product->get_price(); ?>;
+                //var currency = '<?php echo get_woocommerce_currency_symbol(); ?>';
+                var currency = '€';
+                var isProductVariable = ! <?php echo json_encode($product->is_type( 'simple' )); ?>;
+                var single_product_price = <?php echo $product->get_price(); ?>;
+                var price = isProductVariable ? jQuery('.woocommerce-variation-price .woocommerce-Price-amount.amount').text().replace(currency,'') : single_product_price;
  
                 $('[name=quantity]').change(function(){
                     if ( this.value > 0 ) {
+                    	if(isProductVariable){
+                    		if(jQuery('.woocommerce-variation-price .woocommerce-Price-amount.amount').text() == "")
+                    			price = single_product_price;
+                    		else
+                    			price = jQuery('.woocommerce-variation-price .woocommerce-Price-amount.amount').text().replace(currency,'');
+
+                    	}
                         var product_total = parseFloat(price * this.value),
                         cart_total = parseFloat(product_total + current_cart_total);
  

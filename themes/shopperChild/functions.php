@@ -180,26 +180,44 @@ function custom_move_checkout_fields( $fields ) {
 }
 
 
-/* Controllo e validazione dei field PIVA e CF nel form di registrazione */
+/* Controllo e validazione dei field PIVA nel form di registrazione */
 add_action('woocommerce_register_post','antonino_validations', 10, 3 );
 function antonino_validations( $username, $email, $validation_errors ){
     foreach ($_POST as $key => $field) :
-        /*Validazione partita iva*/
+        /*Validazione dei campi richiesti*/
         if( strpos( $key, 'billing_' ) !== false ){
             if($key == 'billing_piva'  ){
             	$piva_without_numbers = preg_replace('/[0-9]+/', '', $field);
-            	if( empty($field) || $field->length !== 11  || $piva_without_numbers->length > 0 ){
+            	if( empty($field) || strlen($field) !== 11  || strlen($piva_without_numbers) > 0 ){
             			$validation_errors->add( $key.'_error', __( 'Perfavore inserisci una partita iva composta da esattemente 11 cifre.', 'woocommerce' ) );
           		  }
             }
         }
-        /*Validazione codice fiscale */
-        if( strpos( $key, 'billing_' ) !== false ){
+       /*validazione codice fiscale */
+	   if( strpos( $key, 'billing_' ) !== false ){
             if($key == 'billing_cf' && $_POST['billing_invoice_type'] == 'professionist_invoice' ){
-            	if( empty($field) || $field->length !== 16 ){
-            			$validation_errors->add( $key.'_error', __( 'Perfavore inserisci una codice fiscale composto da esattemente 16 cifre.', 'woocommerce' ) );
+            	$cf_without_numbers_and_letter = preg_replace('/[0-9]+/', '', $field);
+				$cf_without_numbers_and_letter = preg_replace('/[^a-zA-Z]+/','', $cf_without_numbers_and_letter);
+            	if( empty($field) || strlen($cf_without_numbers_and_letter) !== 16 ){
+            			$validation_errors->add( $key.'_error', __( 'Perfavore inserisci un codice fiscale composto da esattemente 16 cifre.', 'woocommerce' ) );
           		  }
             }
         }
-       endforeach;
+	   endforeach;
+}
+
+function reorder_price(){
+    remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+    add_action( 'woocommerce_single_product_summary', 'woocommerce_ingrossoparty_template_single_price', 10 );
+}
+add_action( 'woocommerce_before_single_product_summary', 'reorder_price' );
+
+if ( ! function_exists( 'woocommerce_ingrossoparty_template_single_price' ) ) {
+
+    /**
+     * Output the product price.
+     */
+    function woocommerce_ingrossoparty_template_single_price() {
+        wc_get_template( 'single-product/price.php' );
+    }
 }
