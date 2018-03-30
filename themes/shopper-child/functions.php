@@ -217,7 +217,7 @@ add_action('woocommerce_before_checkout_form','show_minimum_checkout');
 function show_minimum_checkout(){
 global $minimum_order_error;
 global $minimum;
-    $total = WC()->cart->get_total('edit');
+    $total = WC()->cart->get_subtotal();
 
     if( $total < $minimum){
         wc_add_notice( sprintf( $minimum_order_error , wc_price( $minimum ) ), 'error' );
@@ -225,13 +225,14 @@ global $minimum;
 }
 
 add_action( 'woocommerce_checkout_process', 'wc_minimum_order_amount' );
+add_action( 'woocommerce_before_cart' , 'wc_minimum_order_amount' );
  
 function wc_minimum_order_amount() {
 global $minimum_order_error;
 global $minimum;
     // Set this variable to specify a minimum order value
 
-    if ( WC()->cart->total < $minimum ) {
+    if ( WC()->cart->get_subtotal() < $minimum ) {
 
         if( is_cart() ) {
 
@@ -246,7 +247,7 @@ global $minimum;
 
 }
 
-function enable_update_cart_button(){
+function enable_buttons(){
 if ( ! wp_script_is( 'jquery', 'done' ) ) {
      wp_enqueue_script( 'jquery' );
    }
@@ -254,4 +255,13 @@ if ( ! wp_script_is( 'jquery', 'done' ) ) {
 
 }
 
-add_action( 'wp_enqueue_scripts', 'enable_update_cart_button' );
+add_action( 'wp_enqueue_scripts', 'enable_buttons' );
+
+
+function nascondi_prezzi( $price ) {
+    if ( !is_user_logged_in() ) {
+        return 'Accedi per visualizzare i prezzi';
+    }
+    return $price;
+}
+add_filter( 'wc_product_table_data_price', 'nascondi_prezzi' );
